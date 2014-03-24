@@ -1,0 +1,22 @@
+{
+  "name": "apple-mail-archiver",
+  "version": "0.0.9",
+  "description": "Apple Mail Archive Utility",
+  "dependencies": {
+    "underscore": "*",
+    "emlx2json": "*",
+    "moment": "*",
+    "mongodb": "*",
+    "recursive-search": "*",
+    "sha1": "*",
+    "optimist": "*",
+    "phpjs": "*",
+  "mysql": "2.0.0-rc1"
+  },
+  "author": {
+    "name": "Wouter Vroege",
+    "url": "woutervroege.nl"
+  },
+  "main": "./applemailarchiver.js",
+  "_id": "apple-mail-archiver@0.0.9"
+}
