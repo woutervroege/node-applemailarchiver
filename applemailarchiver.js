@@ -1,9 +1,11 @@
+#! /usr/bin/env node
+
 /*
  * @package applemailarchiver
- * @copyright Copyright(c) 2013 Wouter Vroege. <wouter AT woutervroege DOT nl>
+ * @copyright Copyright(c) 2016 Wouter Vroege. <wouter AT woutervroege DOT nl>
  * @author Wouter Vroege <wouter AT woutervroege DOT nl>
  * @license https://github.com/woutervroege/node-applemailarchiver/blob/master/LICENSE MIT License
-*/
+ */
 
 var emlx2json = require("emlx2json");
 var searchfs = require('./node_modules/recursive-search/lib/recursive-search.js');
@@ -32,7 +34,7 @@ var archiver = {
 
         archiver.MAIL_HOME_DIR = argv.homedir || process.env['HOME'] + "/Library/Mail/V2/";
 
-        if(argv.accountslist)
+        if (argv.accountslist)
             return console.log(_.pluck(archiver.getAllAccounts(), "dirName").join("\n"));
 
         archiver.startDate = (argv.startDate) ? new moment(argv.startDate.toString()).utc().format() : archiver.startDate;
@@ -48,9 +50,9 @@ var archiver = {
             authDb: argv.authDb || argv.db
         };
         archiver.backend.dbconnect(dboptions, function(err) {
-            if(err)
+            if (err)
                 return console.log("backend connection init failed :(");
-            if(!argv.account)
+            if (!argv.account)
                 return archiver.archiveAllAccounts();
             archiver.archiveAccount(argv.account, true);
         });
@@ -62,14 +64,14 @@ var archiver = {
         var record = archiver.records[index];
         emlx2json.parseFile(record.path, function(err, json) {
             index++;
-            if(err) {
-                console.log("\n"+index + " of " + archiver.getNumRecords() + "\nerror: ", err);
+            if (err) {
+                console.log("\n" + index + " of " + archiver.getNumRecords() + "\nerror: ", err);
                 return archiver.processRecord(index);
             }
             var dbrecord = new message(json);
 
-            if(!(dbrecord.utcdate > archiver.startDate && dbrecord.utcdate < archiver.endDate)) {
-                console.log("\n"+index + " of " + archiver.getNumRecords() + "\n" + dbrecord.subject + "\n" + dbrecord.date + "\nout of date range, skipping...");
+            if (!(dbrecord.utcdate > archiver.startDate && dbrecord.utcdate < archiver.endDate)) {
+                console.log("\n" + index + " of " + archiver.getNumRecords() + "\n" + dbrecord.subject + "\n" + dbrecord.date + "\nout of date range, skipping...");
                 return archiver.processRecord(index);
             }
 
@@ -77,7 +79,7 @@ var archiver = {
             dbrecord._account = record.account;
 
             archiver.backend.save(dbrecord, function() {
-                console.log("\n"+index + " of " + archiver.getNumRecords() + "\n" + dbrecord.subject + "\n" + dbrecord.date);
+                console.log("\n" + index + " of " + archiver.getNumRecords() + "\n" + dbrecord.subject + "\n" + dbrecord.date);
                 archiver.processRecord(index);
             })
         });
@@ -141,8 +143,8 @@ var archiver = {
 
     getAllMailBoxesForAccount: function(accountName) {
         var dirPath = archiver.getDirectoryPathForAccount(accountName);
-        if(!fs.existsSync(dirPath))
-            return console.error("Error: account '"+accountName+"' doesn't exist!");
+        if (!fs.existsSync(dirPath))
+            return console.error("Error: account '" + accountName + "' doesn't exist!");
         return _.filter(fs.readdirSync(dirPath), function(child) {
             return child.match(/([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|\.mbox$)/i);
         });
